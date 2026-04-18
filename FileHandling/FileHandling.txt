@@ -1,0 +1,136 @@
+Java I/O Notes: FileWriter, BufferedWriter, and Wrapping
+1. Why FileWriter alone is not sufficient
+
+FileWriter writes characters directly to the file system
+
+Each write() call may trigger a disk I/O operation
+
+Disk I/O is slow
+
+Writing frequently (e.g., in loops) causes poor performance
+
+✅ FileWriter works correctly
+❌ But it is inefficient for frequent or large writes
+
+2. What problem buffering solves
+
+Writing many small chunks to disk is expensive
+
+Buffering allows data to be:
+
+Stored temporarily in memory (RAM)
+
+Written to disk in larger chunks
+
+This reduces the number of system calls
+
+3. Role of BufferedWriter
+
+BufferedWriter wraps another Writer (like FileWriter)
+
+It adds a buffer between your program and the file
+
+Data is written to disk only when:
+
+The buffer is full
+
+flush() is called
+
+close() is called
+
+Example:
+
+BufferedWriter bw = new BufferedWriter(new FileWriter("data.txt"));
+
+4. What “wrapping” means in Java
+
+Wrapping means:
+
+Passing one object into another so the outer object adds extra behavior while using the inner object underneath
+
+Example:
+
+FileWriter fw = new FileWriter("data.txt");
+BufferedWriter bw = new BufferedWriter(fw);
+
+
+FileWriter → does the actual file writing
+
+BufferedWriter → adds buffering
+
+5. How wrapped writers work internally
+
+When you call:
+
+bw.write("Hello");
+
+
+Steps:
+
+BufferedWriter receives the data
+
+Stores it in its internal buffer (memory)
+
+When appropriate, forwards the data to FileWriter
+
+FileWriter writes to the file
+
+6. Benefits of wrapping writers
+
+Better performance
+
+Fewer disk writes
+
+Cleaner APIs (e.g., newLine())
+
+Can combine multiple features
+
+Example:
+
+PrintWriter pw =
+    new PrintWriter(
+        new BufferedWriter(
+            new FileWriter("data.txt")
+        )
+    );
+
+
+Each layer adds functionality.
+
+7. Design principle used
+
+Java I/O uses the Decorator Pattern
+
+Allows adding features without modifying existing classes
+
+Common features added via wrapping:
+
+Buffering
+
+Formatting
+
+Compression
+
+Encryption
+
+8. When to use what
+
+Use FileWriter alone when:
+
+Writing very small amounts of data
+
+Performance doesn’t matter
+
+Quick test or throwaway code
+
+Use BufferedWriter (recommended) when:
+
+Writing in loops
+
+Writing large text
+
+Performance matters (most cases)
+
+9. Key takeaway (one-liner)
+
+Wrapping in Java means layering objects so each outer layer adds behavior while delegating real work to the inner one.
