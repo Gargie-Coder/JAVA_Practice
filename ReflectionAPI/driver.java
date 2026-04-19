@@ -1,8 +1,5 @@
 package ReflectionAPI;
 import java.lang.reflect.*;
-
-
-
 public class driver {
   public static void main(String[] args) {
       myclass obj=new myclass("Draco", 25, "New York");
